@@ -36,18 +36,14 @@ export default class Control{
         this.#render(this.listElement)
         this.#mainDiv.append(this.#nameControl,searchCont,this.#fieldList)
         this.#mainDiv.classList.add('main-cont')
-        
-        if (this.#state == 'select') {
-           
-            this.#controlDiv.append(this.#mainDiv)
-            this.#addButtons()
+        this.#addButtons()
+        this.#controlDiv.append(this.#mainDiv)
+        if (this.#state == 'select')           
             this.#nameControl.innerText = 'Selected'
-        }
-        else {
-            this.#addButtons()
-            this.#controlDiv.append(this.#mainDiv)
+        
+        else            
             this.#nameControl.innerText = 'Available'
-        }
+        
         this.commonDiv.append( this.#controlDiv )
 
     }

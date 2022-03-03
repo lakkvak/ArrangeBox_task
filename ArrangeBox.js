@@ -19,6 +19,7 @@ export default class ArrangeBox{
         this.#addButtons()
         this.#selectedControl = new Control([...this.#selectedList], 'select', this.#boxCont)
         
+        
     }
     #fillRandList(min, max) {
         const list=[]

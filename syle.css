@@ -11,6 +11,9 @@
 .selected{
     background-color: #EEF2FF;
 }
+.select{
+    flex-direction: row-reverse;
+}
 .control-cont{
     display: flex;
     justify-content: space-between;
