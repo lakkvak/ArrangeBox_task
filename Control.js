@@ -10,10 +10,11 @@ export default class Control{
     #visibleList
     #selectedItems 
     #state
+    #listElements
     constructor(listEl, state, commonDiv) {
         this.commonDiv = commonDiv
         this.#state = state
-        this.listElement = [...listEl]
+        this.#listElements = [...listEl]
         this.#searchedList = [...listEl]
         
         this.#selectedItems = new Set()
@@ -33,7 +34,7 @@ export default class Control{
         searchCont.append(this.#searchInput);
 
         this.#fieldList = document.createElement('ul')
-        this.#render(this.listElement)
+        this.#render(this.#listElements)
         this.#mainDiv.append(this.#nameControl,searchCont,this.#fieldList)
         this.#mainDiv.classList.add('main-cont')
         this.#addButtons()
@@ -54,7 +55,7 @@ export default class Control{
            let currentEl = e.target.closest('.li-cont');            
            if (currentEl) {
             this.#selectedItems.add(+currentEl.dataset.id)            
-               if(!e.ctrlKey)
+               if(!e.ctrlKey) 
                {
                    this.#selectedItems.forEach(el => {
                        const notSelected =  this.#fieldList.querySelector(`.${this.#state} [data-id="${el}"]`).classList.remove('selected')
@@ -72,14 +73,14 @@ export default class Control{
     #search() {
         let serchValue = this.#searchInput.value.trim();
         if (serchValue == '') {                         
-            this.#searchedList = [...this.listElement]
+            this.#searchedList = [...this.#listElements]
              for (const value of this.#fieldList.children)                    
                 value.classList.remove('hiden') 
             this.#visibleList.clear()
         }
         else {
             let reg = new RegExp(serchValue, 'i')
-            this.#searchedList = this.listElement.filter((el, i) => {
+            this.#searchedList = this.#listElements.filter((el, i) => {
                 const hideElement =  this.#fieldList.querySelector(`.${this.#state} [data-id="${el.id}"]`).parentElement
                 const idElement = + this.#fieldList.querySelector(`.${this.#state} [data-id="${el.id}"]`).dataset.id
                 
@@ -129,9 +130,9 @@ export default class Control{
         sortSelectedItems.sort((a, b) => {
                 switch (option) {
                     case 'inc':
-                        return this.listElement.findIndex((listEl) => listEl.id == a) - this.listElement.findIndex((listEl) => listEl.id == b)
+                        return this.#listElements.findIndex((listEl) => listEl.id == a) - this.#listElements.findIndex((listEl) => listEl.id == b)
                     case 'dec':
-                        return this.listElement.findIndex((listEl) => listEl.id == b) - this.listElement.findIndex((listEl) => listEl.id == a)
+                        return this.#listElements.findIndex((listEl) => listEl.id == b) - this.#listElements.findIndex((listEl) => listEl.id == a)
                     default:
                         break;
                 }
@@ -146,14 +147,14 @@ export default class Control{
             let hasChange = false
             sortSelectedItems.forEach(el => {
                
-                let indexFrom = this.listElement.findIndex((listEl) => listEl.id == el)
+                let indexFrom = this.#listElements.findIndex((listEl) => listEl.id == el)
                 
                 const isHiden = this.#visibleList.has(el)
                 if (indexFrom != 0 && !isHiden) {
                     for (let i = indexFrom - 1; i >= 0; i--) {
                         console.log(i)
-                        if (!this.#visibleList.has(this.listElement[i].id)) {
-                            this.listElement.splice(i, 0, this.listElement.splice(indexFrom, 1)[0])
+                        if (!this.#visibleList.has(this.#listElements[i].id)) {
+                            this.#listElements.splice(i, 0, this.#listElements.splice(indexFrom, 1)[0])
                             hasChange = true;
                             break
                         }
@@ -162,9 +163,9 @@ export default class Control{
                 }
              
             })
-            console.log(this.listElement)
+            console.log(this.#listElements)
             if(hasChange)
-                this.#render(this.listElement)
+                this.#render(this.#listElements)
         }
     }
     #moveUpAll() {
@@ -173,17 +174,17 @@ export default class Control{
             let hasChange = false
             sortSelectedItems.forEach(el => {
                
-                let indexFrom = this.listElement.findIndex((listEl) => listEl.id == el)
+                let indexFrom = this.#listElements.findIndex((listEl) => listEl.id == el)
                 
                   const isHiden = this.#visibleList.has(el)
                 if (indexFrom != 0 && !isHiden) {
                     hasChange = true;
-                    this.listElement.unshift(this.listElement.splice(indexFrom, 1)[0])
+                    this.#listElements.unshift(this.#listElements.splice(indexFrom, 1)[0])
                 }
              
             })
             if(hasChange)
-                this.#render(this.listElement)
+                this.#render(this.#listElements)
         }
     }
     #moveDown() {
@@ -193,14 +194,14 @@ export default class Control{
             let hasChange = false
             sortSelectedItems.forEach(el => {
                
-                let indexFrom = this.listElement.findIndex((listEl) => listEl.id == el)
+                let indexFrom = this.#listElements.findIndex((listEl) => listEl.id == el)
 
                 const isHiden = this.#visibleList.has(el)
-                if (indexFrom != this.listElement.length && !isHiden) {
-                    for (let i = indexFrom +1; i < this.listElement.length; i++) {
+                if (indexFrom != this.#listElements.length && !isHiden) {
+                    for (let i = indexFrom +1; i < this.#listElements.length; i++) {
                         
-                        if (!this.#visibleList.has(this.listElement[i].id)) {
-                            this.listElement.splice(i, 0, this.listElement.splice(indexFrom, 1)[0])
+                        if (!this.#visibleList.has(this.#listElements[i].id)) {
+                            this.#listElements.splice(i, 0, this.#listElements.splice(indexFrom, 1)[0])
                             hasChange = true;
                             break
                         }
@@ -210,7 +211,7 @@ export default class Control{
             })
             
             if(hasChange)
-                this.#render(this.listElement)
+                this.#render(this.#listElements)
         }
     }
     #moveDownAll() {
@@ -219,16 +220,16 @@ export default class Control{
             let hasChange = false
             sortSelectedItems.forEach(el => {
                
-                let indexFrom = this.listElement.findIndex((listEl) => listEl.id == el)
+                let indexFrom = this.#listElements.findIndex((listEl) => listEl.id == el)
                 const isHiden = this.#visibleList.has(el)
 
-                if (indexFrom != this.listElement.length-1 && !isHiden) {
-                    this.listElement.push(this.listElement.splice(indexFrom, 1)[0])
+                if (indexFrom != this.#listElements.length-1 && !isHiden) {
+                    this.#listElements.push(this.#listElements.splice(indexFrom, 1)[0])
                     hasChange = true;
                 }             
             })
             if(hasChange)
-                this.#render(this.listElement)
+                this.#render(this.#listElements)
         }
     }
     #render(list) { 
@@ -251,7 +252,7 @@ export default class Control{
      
         if (this.#selectedItems.size != 0) {
             
-            passedList = this.listElement.filter((el) => {
+            passedList = this.#listElements.filter((el) => {
                 
                 if (this.#selectedItems.has(el.id))
                     return true
@@ -259,9 +260,9 @@ export default class Control{
                 return false           
             })
             this.#selectedItems.clear()
-            this.listElement = newList
+            this.#listElements = newList
             this.#searchedList = [...newList]
-            this.#render(this.listElement)
+            this.#render(this.#listElements)
         }
         return passedList
     }
@@ -269,32 +270,32 @@ export default class Control{
         
         this.#selectedItems.clear()
         this.#searchedList.forEach(el => {
-            let deleteIndex = this.listElement.findIndex((listEl) => listEl.id == el.id)
-            this.listElement.splice(deleteIndex, 1)
+            let deleteIndex = this.#listElements.findIndex((listEl) => listEl.id == el.id)
+            this.#listElements.splice(deleteIndex, 1)
         })
-        this.#render(this.listElement)
+        this.#render(this.#listElements)
         const passedList = [...this.#searchedList]
         this.#search()
         return passedList
     }
      addElementList(list) { //adds new elements in list
         
-        this.listElement.push(...list)
+        this.#listElements.push(...list)
         
-        this.#render(this.listElement)
+        this.#render(this.#listElements)
         this.#search()
     }
     setNewList(list) { //recreates list
         this.#selectedItems.clear()
-        this.listElement = list
-        this.#render(this.listElement)
+        this.#listElements = list
+        this.#render(this.#listElements)
         this.#search()
     }
-    set selectedElements(idElements) {
+    set selectedElements(idElements) { //replaces selected elements
         this.#selectedItems = new Set(idElements)
     }
     get currentValues() {
 
-        return  [...this.listElement]
+        return  [...this.#listElements]
     }
 }
